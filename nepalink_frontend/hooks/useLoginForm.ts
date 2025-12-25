@@ -25,10 +25,16 @@ export const useLoginForm = () => {
     form.setValue('role', newRole)
   }
 
+  // ✅ Login submit handler
   const onSubmit = async (data: LoginFormData) => {
     console.log('Login data:', data)
     router.push('/dashboard')
   }
 
-  return { role, switchRole, ...form, onSubmit }
+  // ✅ Signup navigation handler
+  const goToSignup = () => {
+    router.push('/register')
+  }
+
+  return { role, switchRole, ...form, onSubmit, goToSignup }
 }
