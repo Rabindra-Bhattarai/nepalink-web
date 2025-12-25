@@ -1,12 +1,19 @@
 'use client'
 
-import Link from 'next/link'
 import { Input } from '../_components/ui/Input'
 import { Button } from '../_components/ui/Button'
 import { useLoginForm } from '@/hooks/useLoginForm'
 
 export const LoginForm = () => {
-  const { role, switchRole, register, handleSubmit, formState: { errors }, onSubmit } = useLoginForm()
+  const {
+    role,
+    switchRole,
+    register,
+    handleSubmit,
+    formState: { errors },
+    onSubmit,
+    goToSignup, // ✅ new handler from hook
+  } = useLoginForm()
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -52,9 +59,13 @@ export const LoginForm = () => {
 
       <p className="text-sm text-center text-gray-600 mt-4">
         Don’t have an account?{' '}
-        <Link href="/register" className="text-blue-600 hover:underline font-medium">
+        <button
+          type="button"
+          onClick={goToSignup}
+          className="text-blue-600 hover:underline font-medium"
+        >
           Register
-        </Link>
+        </button>
       </p>
     </form>
   )
