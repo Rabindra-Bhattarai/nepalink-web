@@ -6,39 +6,15 @@ import { useLoginForm } from '@/hooks/useLoginForm'
 
 export const LoginForm = () => {
   const {
-    role,
-    switchRole,
     register,
     handleSubmit,
     formState: { errors },
     onSubmit,
-    goToSignup, // ✅ new handler from hook
+    goToSignup,
   } = useLoginForm()
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      {/* Role Toggle */}
-      <div className="flex justify-center gap-2 mb-4">
-        <button
-          type="button"
-          onClick={() => switchRole('member')}
-          className={`px-4 py-2 font-medium border rounded-md transition-all duration-200 ${
-            role === 'member' ? 'bg-blue-600 text-white' : 'bg-white text-blue-600'
-          }`}
-        >
-          Member
-        </button>
-        <button
-          type="button"
-          onClick={() => switchRole('caregiver')}
-          className={`px-4 py-2 font-medium border rounded-md transition-all duration-200 ${
-            role === 'caregiver' ? 'bg-blue-600 text-white' : 'bg-white text-blue-600'
-          }`}
-        >
-          Caregiver
-        </button>
-      </div>
-
       <Input
         label="Email"
         type="email"
