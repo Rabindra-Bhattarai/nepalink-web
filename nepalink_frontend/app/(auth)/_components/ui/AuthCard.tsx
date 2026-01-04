@@ -13,7 +13,7 @@ export const AuthCard = ({
   return (
     <div className="flex min-h-screen bg-gray-50">
       {/* Left Panel */}
-      <div className="hidden md:flex flex-col justify-center bg-gradient-to-br from-blue-50 to-blue-100 p-10 w-1/2 text-blue-900 space-y-6">
+      <div className="hidden md:flex flex-col justify-center bg-linear-to-br from-blue-50 to-blue-100 p-10 w-1/2 text-blue-900 space-y-6">
         <div className="flex items-center gap-3">
           <Image
             src="/nepalink.png"

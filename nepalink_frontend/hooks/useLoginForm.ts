@@ -3,38 +3,37 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { loginSchema } from '@/schemas/loginSchema'
 import { z } from 'zod'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
 
 type LoginFormData = z.infer<typeof loginSchema>
 
+// Hardcoded admin credentials
+const ADMIN_EMAIL = 'admin@gmail.com'
+const ADMIN_PASSWORD = 'admin123'
+
 export const useLoginForm = () => {
   const router = useRouter()
-  const [role, setRole] = useState<'member' | 'caregiver'>('member')
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      role: 'member',
       email: '',
       password: '',
     },
   })
 
-  const switchRole = (newRole: 'member' | 'caregiver') => {
-    setRole(newRole)
-    form.setValue('role', newRole)
-  }
-
-  // ✅ Login submit handler
   const onSubmit = async (data: LoginFormData) => {
-    console.log('Login data:', data)
-    router.push('/dashboard')
+    // ✅ Admin check
+    if (data.email === ADMIN_EMAIL && data.password === ADMIN_PASSWORD) {
+      router.push('/dashboard/admin-dashboard')
+    } else {
+      // ✅ Member login (registered users)
+      router.push('/dashboard/member-dashboard')
+    }
   }
 
-  // ✅ Signup navigation handler
   const goToSignup = () => {
     router.push('/register')
   }
 
-  return { role, switchRole, ...form, onSubmit, goToSignup }
+  return { ...form, onSubmit, goToSignup }
 }
