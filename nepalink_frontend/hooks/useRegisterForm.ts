@@ -12,6 +12,7 @@ export const useRegisterForm = () => {
   const router = useRouter()
   const [serverError, setServerError] = useState<string | null>(null)
   const [serverSuccess, setServerSuccess] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
 
   const form = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
@@ -27,6 +28,7 @@ export const useRegisterForm = () => {
   const onSubmit = async (data: RegisterFormData) => {
     setServerError(null)
     setServerSuccess(null)
+    setLoading(true)
 
     const res = await handleRegister({
       name: data.name,
@@ -41,7 +43,9 @@ export const useRegisterForm = () => {
     } else {
       setServerError(res.message)
     }
+
+    setLoading(false)
   }
 
-  return { ...form, onSubmit, serverError, serverSuccess }
+  return { ...form, onSubmit, serverError, serverSuccess, loading }
 }

@@ -13,6 +13,7 @@ export const RegisterForm = () => {
     onSubmit,
     serverError,
     serverSuccess,
+    loading,
   } = useRegisterForm()
 
   return (
@@ -26,8 +27,12 @@ export const RegisterForm = () => {
       {serverError && <p className="text-red-500 text-sm">{serverError}</p>}
       {serverSuccess && <p className="text-green-600 text-sm">{serverSuccess}</p>}
 
-      <Button type="submit" className="w-full font-semibold text-lg">
-        Register
+      <Button
+        type="submit"
+        className="w-full font-semibold text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+        disabled={loading}
+      >
+        {loading ? 'Registering...' : 'Register'}
       </Button>
 
       <p className="text-sm text-center text-gray-600 mt-4">
