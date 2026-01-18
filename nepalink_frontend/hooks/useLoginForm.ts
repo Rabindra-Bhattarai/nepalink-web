@@ -3,12 +3,9 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { loginSchema } from '@/schemas/loginSchema'
 import { z } from 'zod'
 import { useRouter } from 'next/navigation'
+import { handleLogin } from '@/lib/actions/auth-actions'
 
 type LoginFormData = z.infer<typeof loginSchema>
-
-// Hardcoded admin credentials
-const ADMIN_EMAIL = 'admin@gmail.com'
-const ADMIN_PASSWORD = 'admin123'
 
 export const useLoginForm = () => {
   const router = useRouter()
@@ -22,12 +19,17 @@ export const useLoginForm = () => {
   })
 
   const onSubmit = async (data: LoginFormData) => {
-    // ✅ Admin check
-    if (data.email === ADMIN_EMAIL && data.password === ADMIN_PASSWORD) {
-      router.push('/dashboard/admin-dashboard')
-    } else {
-      // ✅ Member login (registered users)
+    const res = await handleLogin({
+      email: data.email,
+      password: data.password,
+    })
+
+    if (res.success) {
+      console.log('Login success:', res.data)
+      // redirect based on role or just to dashboard
       router.push('/dashboard/member-dashboard')
+    } else {
+      alert(res.message)
     }
   }
 
