@@ -1,11 +1,13 @@
 "use client"
 
+import { useRouter } from "next/navigation"
+import { clearAuthCookies } from "../../../../lib/cookie"
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
   LineChart, Line, PieChart, Pie, Cell, AreaChart, Area
 } from "recharts"
 
-// Example member data
+// Dummy data
 const barData = [
   { name: "Notices", value: 10 },
   { name: "Opportunities", value: 35 },
@@ -33,15 +35,52 @@ const areaData = [
   { week: "Week 4", opportunities: 25 },
 ]
 
-export default function MemberDashboardPage() {
-  return (
-    <main className="flex flex-col items-center min-h-screen bg-gray-50 p-6">
-      <h1 className="text-3xl font-bold text-green-600 mb-6">Member Dashboard</h1>
+// Simple Button component (self-contained)
+const Button = ({
+  children,
+  onClick,
+  className = "",
+}: {
+  children: React.ReactNode
+  onClick?: () => void
+  className?: string
+}) => (
+  <button
+    onClick={onClick}
+    className={`bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold shadow-md hover:bg-blue-700 transition-transform hover:scale-105 ${className}`}
+  >
+    {children}
+  </button>
+)
 
-      <div className="grid grid-cols-2 gap-8 w-full max-w-5xl">
+export default function DashboardPage() {
+  const router = useRouter()
+
+  const handleLogout = async () => {
+    await clearAuthCookies()
+    router.push("/login")
+  }
+
+  return (
+    <main className="min-h-screen bg-linear-to-br from-blue-50 via-white to-green-50 flex flex-col items-center p-8">
+      {/* Header */}
+      <div className="w-full max-w-6xl flex justify-between items-center mb-10">
+        <h1 className="text-4xl font-extrabold text-blue-700 drop-shadow-sm">
+          🌿 NepaLink Dashboard
+        </h1>
+        <Button
+          onClick={handleLogout}
+          className="bg-red-600 hover:bg-red-700"
+        >
+          Logout
+        </Button>
+      </div>
+
+      {/* Charts Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-6xl">
         {/* Bar Chart */}
-        <div className="bg-white p-4 rounded-lg shadow">
-          <h2 className="text-lg font-semibold mb-2">Your Activity Summary</h2>
+        <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition">
+          <h2 className="text-lg font-semibold mb-2">Activity Summary</h2>
           <ResponsiveContainer width="100%" height={250}>
             <BarChart data={barData}>
               <XAxis dataKey="name" />
@@ -53,7 +92,7 @@ export default function MemberDashboardPage() {
         </div>
 
         {/* Line Chart */}
-        <div className="bg-white p-4 rounded-lg shadow">
+        <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition">
           <h2 className="text-lg font-semibold mb-2">Requests Over Time</h2>
           <ResponsiveContainer width="100%" height={250}>
             <LineChart data={lineData}>
@@ -66,7 +105,7 @@ export default function MemberDashboardPage() {
         </div>
 
         {/* Pie Chart */}
-        <div className="bg-white p-4 rounded-lg shadow">
+        <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition">
           <h2 className="text-lg font-semibold mb-2">Community Distribution</h2>
           <ResponsiveContainer width="100%" height={250}>
             <PieChart>
@@ -87,7 +126,7 @@ export default function MemberDashboardPage() {
         </div>
 
         {/* Area Chart */}
-        <div className="bg-white p-4 rounded-lg shadow">
+        <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition">
           <h2 className="text-lg font-semibold mb-2">Opportunities Growth</h2>
           <ResponsiveContainer width="100%" height={250}>
             <AreaChart data={areaData}>
@@ -99,6 +138,11 @@ export default function MemberDashboardPage() {
           </ResponsiveContainer>
         </div>
       </div>
+
+      {/* Footer */}
+      <footer className="mt-12 text-sm text-gray-500">
+        © {new Date().getFullYear()} NepaLink. All rights reserved.
+      </footer>
     </main>
   )
 }

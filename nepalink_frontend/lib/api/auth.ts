@@ -1,31 +1,31 @@
-// Actual backend API calls
-import axios from './axios'; // IMPORTANT: axios instance with base URL
-import { API } from './endpoints';
+import axios from "./axios";
+import { API } from "./endpoints";
 
-export const register = async(registerData: any) => {
-    try{
-        const response = await axios.post(API.AUTH.REGISTER, registerData);
-        return response.data; // response ko body(what backend returns)
-    }catch(err: Error | any){
-        // if 4xx/5xx error, axios throws error
-        throw new Error(
-            err.response?.data?.message  // backend error message
-            || err.message // general axios error message
-            || "Registration failed" // fallback message
-        )
-    }
-}
+export const register = async (registerData: any) => {
+  try {
+    const response = await axios.post(API.AUTH.REGISTER, registerData);
+    return response.data;
+  } catch (err: any) {
+    // Normalize backend error messages
+    const rawMessage = err.response?.data?.message;
+    const message = Array.isArray(rawMessage)
+      ? rawMessage.join(", ")
+      : rawMessage || err.message || "Registration failed";
 
-export const login = async(loginData: any) => {
-    try{
-        const response = await axios.post(API.AUTH.LOGIN, loginData);
-        return response.data; // response ko body(what backend returns)
-    }catch(err: Error | any){
-        // if 4xx/5xx error, axios throws error
-        throw new Error(
-            err.response?.data?.message  // backend error message
-            || err.message // general axios error message
-            || "Login failed" // fallback message
-        )
-    }
-}
+    throw new Error(message);
+  }
+};
+
+export const login = async (loginData: any) => {
+  try {
+    const response = await axios.post(API.AUTH.LOGIN, loginData);
+    return response.data;
+  } catch (err: any) {
+    const rawMessage = err.response?.data?.message;
+    const message = Array.isArray(rawMessage)
+      ? rawMessage.join(", ")
+      : rawMessage || err.message || "Login failed";
+
+    throw new Error(message);
+  }
+};

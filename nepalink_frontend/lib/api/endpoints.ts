@@ -1,8 +1,6 @@
-// list of backend routes
-
 export const API = {
-    AUTH: {
-        REGISTER: '/api/auth/register',
-        LOGIN: '/api/auth/login',
-    }
-}
+  AUTH: {
+    REGISTER: "http://localhost:3000/api/auth/register",
+    LOGIN: "http://localhost:3000/api/auth/login",
+  },
+};
