@@ -1,5 +1,5 @@
-import { AuthCard } from '../_components/ui/AuthCard'
-import { RegisterForm } from './RegisterForm'
+import { AuthCard } from "../_components/ui/AuthCard";
+import { RegisterForm } from "./RegisterForm";
 
 export default function RegisterPage() {
   return (
@@ -9,5 +9,5 @@ export default function RegisterPage() {
     >
       <RegisterForm />
     </AuthCard>
-  )
+  );
 }
