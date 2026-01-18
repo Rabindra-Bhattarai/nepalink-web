@@ -3,7 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { registerSchema } from '@/schemas/registerSchema'
 import { z } from 'zod'
 import { useRouter } from 'next/navigation'
-import axios from 'axios'
+import { handleRegister } from '@/lib/actions/auth-actions'
 
 type RegisterFormData = z.infer<typeof registerSchema>
 
@@ -22,18 +22,19 @@ export const useRegisterForm = () => {
   })
 
   const onSubmit = async (data: RegisterFormData) => {
-    try {
-      const res = await axios.post('http://192.168.1.4:3000/api/auth/register', {
-        name: data.name,
-        email: data.email,
-        phone: data.phone,
-        password: data.password,
-      })
+    const res = await handleRegister({
+      name: data.name,
+      email: data.email,
+      phone: data.phone,
+      password: data.password,
+    })
 
+    if (res.success) {
       console.log('Register success:', res.data)
       router.push('/login')
-    } catch (error: any) {
-      console.error('Register error:', error.response?.data || error.message)
+    } else {
+      // surface backend error message to UI
+      alert(res.message)
     }
   }
 
