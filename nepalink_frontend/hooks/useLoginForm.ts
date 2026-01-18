@@ -4,11 +4,14 @@ import { loginSchema } from '@/schemas/loginSchema'
 import { z } from 'zod'
 import { useRouter } from 'next/navigation'
 import { handleLogin } from '@/lib/actions/auth-actions'
+import { useState } from 'react'
 
 type LoginFormData = z.infer<typeof loginSchema>
 
 export const useLoginForm = () => {
   const router = useRouter()
+  const [serverError, setServerError] = useState<string | null>(null)
+  const [serverSuccess, setServerSuccess] = useState<string | null>(null)
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -19,17 +22,19 @@ export const useLoginForm = () => {
   })
 
   const onSubmit = async (data: LoginFormData) => {
+    setServerError(null)
+    setServerSuccess(null)
+
     const res = await handleLogin({
       email: data.email,
       password: data.password,
     })
 
     if (res.success) {
-      console.log('Login success:', res.data)
-      // redirect based on role or just to dashboard
-      router.push('/dashboard/member-dashboard')
+      setServerSuccess(res.message)
+      setTimeout(() => router.push('/dashboard/member-dashboard'), 1500)
     } else {
-      alert(res.message)
+      setServerError(res.message)
     }
   }
 
@@ -37,5 +42,5 @@ export const useLoginForm = () => {
     router.push('/register')
   }
 
-  return { ...form, onSubmit, goToSignup }
+  return { ...form, onSubmit, goToSignup, serverError, serverSuccess }
 }

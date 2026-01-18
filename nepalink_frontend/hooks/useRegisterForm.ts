@@ -4,11 +4,14 @@ import { registerSchema } from '@/schemas/registerSchema'
 import { z } from 'zod'
 import { useRouter } from 'next/navigation'
 import { handleRegister } from '@/lib/actions/auth-actions'
+import { useState } from 'react'
 
 type RegisterFormData = z.infer<typeof registerSchema>
 
 export const useRegisterForm = () => {
   const router = useRouter()
+  const [serverError, setServerError] = useState<string | null>(null)
+  const [serverSuccess, setServerSuccess] = useState<string | null>(null)
 
   const form = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
@@ -22,6 +25,9 @@ export const useRegisterForm = () => {
   })
 
   const onSubmit = async (data: RegisterFormData) => {
+    setServerError(null)
+    setServerSuccess(null)
+
     const res = await handleRegister({
       name: data.name,
       email: data.email,
@@ -30,13 +36,12 @@ export const useRegisterForm = () => {
     })
 
     if (res.success) {
-      console.log('Register success:', res.data)
-      router.push('/login')
+      setServerSuccess(res.message)
+      setTimeout(() => router.push('/login'), 1500)
     } else {
-      // surface backend error message to UI
-      alert(res.message)
+      setServerError(res.message)
     }
   }
 
-  return { ...form, onSubmit }
+  return { ...form, onSubmit, serverError, serverSuccess }
 }

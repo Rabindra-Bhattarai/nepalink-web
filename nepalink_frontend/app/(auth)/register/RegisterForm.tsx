@@ -11,6 +11,8 @@ export const RegisterForm = () => {
     handleSubmit,
     formState: { errors },
     onSubmit,
+    serverError,
+    serverSuccess,
   } = useRegisterForm()
 
   return (
@@ -20,6 +22,9 @@ export const RegisterForm = () => {
       <Input label="Phone Number" type="text" {...register('phone')} error={errors.phone?.message} />
       <Input label="Password" type="password" {...register('password')} error={errors.password?.message} />
       <Input label="Confirm Password" type="password" {...register('confirmPassword')} error={errors.confirmPassword?.message} />
+
+      {serverError && <p className="text-red-500 text-sm">{serverError}</p>}
+      {serverSuccess && <p className="text-green-600 text-sm">{serverSuccess}</p>}
 
       <Button type="submit" className="w-full font-semibold text-lg">
         Register
