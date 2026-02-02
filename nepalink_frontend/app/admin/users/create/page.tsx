@@ -34,18 +34,55 @@ export default function CreateUserPage() {
   }
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Create New User</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" label={""} />
-        <Input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" label={""} />
-        <select value={role} onChange={(e) => setRole(e.target.value)} className="border p-2 rounded">
-          <option value="user">User</option>
-          <option value="admin">Admin</option>
-        </select>
-        <input type="file" onChange={(e) => setImage(e.target.files?.[0] || null)} />
-        <Button type="submit">Create User</Button>
-      </form>
-    </div>
+    <main className="min-h-screen bg-linear-to-br from-green-50 via-white to-blue-50 flex flex-col items-center p-8">
+      <div className="w-full max-w-lg bg-white rounded-xl shadow-lg p-8">
+        <h1 className="text-3xl font-bold text-green-700 mb-6">
+          Create New User
+        </h1>
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <Input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Enter full name"
+            label="Name"
+          />
+          <Input
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Enter email address"
+            label="Email"
+          />
+
+          <div className="flex flex-col">
+            <label className="mb-2 font-semibold text-gray-700">Role</label>
+            <select
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              className="border p-2 rounded focus:ring-2 focus:ring-green-400"
+            >
+              <option value="user">User</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+
+          <div className="flex flex-col">
+            <label className="mb-2 font-semibold text-gray-700">Profile Image</label>
+            <input
+              type="file"
+              onChange={(e) => setImage(e.target.files?.[0] || null)}
+              className="border p-2 rounded"
+            />
+          </div>
+
+          <Button
+            type="submit"
+            className="w-full bg-green-600 text-white hover:bg-green-700 font-semibold py-2 rounded-lg shadow-md"
+          >
+            Create User
+          </Button>
+        </form>
+      </div>
+    </main>
   );
 }
