@@ -35,7 +35,8 @@ export const useLoginForm = () => {
 
       if (res.success) {
         setServerSuccess(res.message);
-        setTimeout(() => router.push("/dashboard/member-dashboard"), 1500);
+        // ✅ Redirect members to their dashboard
+        setTimeout(() => router.push("/user/dashboard"), 1500);
       } else {
         setServerError(res.message);
       }

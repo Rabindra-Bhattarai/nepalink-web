@@ -3,8 +3,13 @@
 import { Input } from '../_components/ui/Input'
 import { Button } from '../_components/ui/Button'
 import { useLoginForm } from '@/hooks/useLoginForm'
+// import { useAuth } from '@/contexts/AuthContext';
+
+// sir ko code ma authcontext file hola search gara
+//logout ma ne thapne(sir le page.tsx ma halnu va cha root wala, of auth)
 
 export const LoginForm = () => {
+  // const { checkAuth } = useAuth();
   const {
     register,
     handleSubmit,
@@ -18,6 +23,7 @@ export const LoginForm = () => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      {/* await checkAuth(); */}
       <Input label="Email" type="email" {...register('email')} error={errors.email?.message} />
       <Input label="Password" type="password" {...register('password')} error={errors.password?.message} />
 
