@@ -5,21 +5,25 @@ import { fetchUsers, deleteUser } from "@/lib/actions/admin-actions";
 import { Button } from "../../(auth)/_components/ui/Button";
 import { useRouter } from "next/navigation";
 import { clearAuthCookies } from "@/lib/cookie";
+import toast from "react-hot-toast";
 
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<any[]>([]);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
+  const [loading, setLoading] = useState(false);
   const limit = 10;
   const router = useRouter();
 
   useEffect(() => {
     async function loadUsers() {
+      setLoading(true);
       const res = await fetchUsers(page, limit);
       if (res) {
         setUsers(res.data);
         setTotal(res.total);
       }
+      setLoading(false);
     }
     loadUsers();
   }, [page]);
@@ -32,17 +36,19 @@ export default function AdminUsersPage() {
   };
 
   const handleDelete = async (userId: string) => {
+    setLoading(true);
     const result = await deleteUser(userId);
     if (result?.success) {
-      // Refresh users after deletion
+      toast.success("User deleted successfully!");
       const res = await fetchUsers(page, limit);
       if (res) {
         setUsers(res.data);
         setTotal(res.total);
       }
     } else {
-      console.error("Failed to delete user");
+      toast.error("Failed to delete user");
     }
+    setLoading(false);
   };
 
   return (
@@ -57,6 +63,11 @@ export default function AdminUsersPage() {
           Logout
         </Button>
       </div>
+
+      {/* Loading Spinner */}
+      {loading && (
+        <div className="text-center text-gray-600 mb-4">Loading...</div>
+      )}
 
       {/* User Table */}
       <div className="bg-white rounded-xl shadow-lg overflow-hidden">
