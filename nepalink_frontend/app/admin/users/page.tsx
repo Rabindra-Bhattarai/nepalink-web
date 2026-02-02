@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { fetchUsers } from "@/lib/actions/admin-actions";
+import { fetchUsers, deleteUser } from "@/lib/actions/admin-actions";
 import { Button } from "../../(auth)/_components/ui/Button";
 import { useRouter } from "next/navigation";
 import { clearAuthCookies } from "@/lib/cookie";
@@ -29,6 +29,20 @@ export default function AdminUsersPage() {
   const handleLogout = async () => {
     await clearAuthCookies();
     router.push("/login");
+  };
+
+  const handleDelete = async (userId: string) => {
+    const result = await deleteUser(userId);
+    if (result?.success) {
+      // Refresh users after deletion
+      const res = await fetchUsers(page, limit);
+      if (res) {
+        setUsers(res.data);
+        setTotal(res.total);
+      }
+    } else {
+      console.error("Failed to delete user");
+    }
   };
 
   return (
@@ -75,7 +89,7 @@ export default function AdminUsersPage() {
                     Edit
                   </Button>
                   <Button
-                    onClick={() => console.log("Delete user", user._id)}
+                    onClick={() => handleDelete(user._id)}
                     className="bg-red-500 text-white hover:bg-red-600"
                   >
                     Delete
