@@ -22,13 +22,23 @@ export async function proxy(req: NextRequest) {
   if (token && user) {
     // Admin routes must be accessed only by admins
     if (isAdminPath && user.role !== "admin") {
-      return NextResponse.redirect(new URL("/dashboard", req.url));
+      return NextResponse.redirect(new URL("/user/dashboard", req.url));
     }
 
     // User routes must be accessed only by logged-in users (admins can also access)
     if (isUserPath && user.role !== "user" && user.role !== "admin") {
       return NextResponse.redirect(new URL("/login", req.url));
     }
+
+    // Redirect after login based on role
+    if (pathname === "/login" && token && user) {
+      if (user.role === "admin") {
+        return NextResponse.redirect(new URL("/admin/dashboard", req.url));
+      } else {
+        return NextResponse.redirect(new URL("/user/dashboard", req.url));
+      }
+}
+
   }
 
   // Allow access to all other paths

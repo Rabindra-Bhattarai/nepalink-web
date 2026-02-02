@@ -3,7 +3,7 @@ export default function AdminDashboard() {
     <div className="p-6">
       <h1 className="text-2xl font-bold text-blue-600">Admin Dashboard</h1>
       <p className="mt-2 text-gray-700">
-        Welcome, Admin! Here you can manage users and view system stats.
+        Welcome, Admin! Manage users and system settings here.
       </p>
 
       <div className="mt-6 space-y-4">
