@@ -9,6 +9,8 @@ export const handleRegister = async (formData: any) => {
     console.log("Register API response:", res);
 
     if (res.success) {
+      await setAuthToken(res.token);
+      await setUserData(res.data);
       return {
         success: true,
         data: res.data,
