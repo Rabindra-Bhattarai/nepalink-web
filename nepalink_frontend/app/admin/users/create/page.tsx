@@ -9,7 +9,7 @@ export default function CreateUserPage() {
   const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [role, setRole] = useState("user");
+  const [role, setRole] = useState("member");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [image, setImage] = useState<File | null>(null);
@@ -80,7 +80,7 @@ export default function CreateUserPage() {
               onChange={(e) => setRole(e.target.value)}
               className="border p-2 rounded focus:ring-2 focus:ring-green-400"
             >
-              <option value="user">User</option>
+              <option value="member">Member</option>
               <option value="admin">Admin</option>
               <option value="nurse">Nurse</option>
             </select>

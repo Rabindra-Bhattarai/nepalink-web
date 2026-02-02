@@ -32,7 +32,7 @@ export default function AdminUsersPage() {
 
   useEffect(() => {
     async function init() {
-      // 🔹 Step 4: Secure access
+      // Secure access
       const user = await getCurrentUser();
       if (!user || user.role !== "admin") {
         toast.error("Access denied. Admins only.");
@@ -118,7 +118,9 @@ export default function AdminUsersPage() {
               <tr key={user._id} className="hover:bg-green-50 transition-colors">
                 <td className="p-3 border-b text-gray-700">{user.name}</td>
                 <td className="p-3 border-b text-gray-700">{user.email}</td>
-                <td className="p-3 border-b capitalize text-gray-700">{user.role}</td>
+                <td className="p-3 border-b text-gray-700">
+                  {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
+                </td>
                 <td className="p-3 border-b flex gap-2">
                   <Button
                     onClick={() => router.push(`/admin/users/${user._id}`)}

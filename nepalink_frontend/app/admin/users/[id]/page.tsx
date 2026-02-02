@@ -30,6 +30,14 @@ export default function UserDetailPage() {
         <p><strong>Name:</strong> {user.name}</p>
         <p><strong>Email:</strong> {user.email}</p>
         <p><strong>Role:</strong> {user.role}</p>
+        <p><strong>Phone:</strong> {user.phone}</p>
+        {user.photo && (
+          <div className="mt-4">
+            <strong>Photo:</strong>
+            <br />
+            <img src={user.photo} alt="User Photo" className="w-32 h-32 object-cover rounded-full mt-2" />
+          </div>
+        )}
       </div>
     </div>
   );
