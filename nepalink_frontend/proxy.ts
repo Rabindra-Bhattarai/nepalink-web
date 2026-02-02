@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { getUserData, getAuthToken } from "./lib/cookie";
 
 const publicPaths = ["/login", "/register", "/forgot-password"];
-const adminPaths = ["admin"];
-const userPaths = ["user"];
 
 export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -12,8 +10,8 @@ export async function proxy(req: NextRequest) {
   const user = token ? await getUserData() : null;
 
   const isPublicPath = publicPaths.some((path) => pathname.startsWith(path));
-  const isAdminPath = adminPaths.some((path) => pathname.startsWith(path));
-  const isUserPath = userPaths.some((path) => pathname.startsWith(path));
+  const isAdminPath = pathname.startsWith("/admin");
+  const isUserPath = pathname.startsWith("/user");
 
   // Redirect to login if not authenticated and not accessing a public path
   if (!token && !isPublicPath) {
@@ -22,12 +20,14 @@ export async function proxy(req: NextRequest) {
 
   // Role-based redirects
   if (token && user) {
+    // Admin routes must be accessed only by admins
     if (isAdminPath && user.role !== "admin") {
       return NextResponse.redirect(new URL("/dashboard", req.url));
     }
 
+    // User routes must be accessed only by logged-in users (admins can also access)
     if (isUserPath && user.role !== "user" && user.role !== "admin") {
-      return NextResponse.redirect(new URL("/admin/dashboard", req.url));
+      return NextResponse.redirect(new URL("/login", req.url));
     }
   }
 
