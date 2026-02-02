@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
+import { Button } from "../../../(auth)/_components/ui/Button";
+import { Input } from "../../../(auth)/_components/ui/Input";
 
 export default function CreateUserPage() {
   const router = useRouter();
@@ -37,8 +37,8 @@ export default function CreateUserPage() {
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Create New User</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" />
-        <Input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" />
+        <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" label={""} />
+        <Input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" label={""} />
         <select value={role} onChange={(e) => setRole(e.target.value)} className="border p-2 rounded">
           <option value="user">User</option>
           <option value="admin">Admin</option>
