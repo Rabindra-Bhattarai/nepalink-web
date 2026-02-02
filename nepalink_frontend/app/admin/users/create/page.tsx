@@ -10,6 +10,8 @@ export default function CreateUserPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("user");
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
   const [image, setImage] = useState<File | null>(null);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -18,9 +20,11 @@ export default function CreateUserPage() {
     formData.append("name", name);
     formData.append("email", email);
     formData.append("role", role);
-    if (image) formData.append("image", image);
+    formData.append("phone", phone);
+    formData.append("password", password);
+    if (image) formData.append("photo", image); // ✅ matches backend
 
-    const res = await fetch("/api/admin/users", {
+    const res = await fetch("http://localhost:3000/api/admin/users", {
       method: "POST",
       body: formData,
       credentials: "include",
@@ -40,7 +44,7 @@ export default function CreateUserPage() {
           Create New User
         </h1>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6" encType="multipart/form-data">
           <Input
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -54,6 +58,21 @@ export default function CreateUserPage() {
             label="Email"
           />
 
+          <Input
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            placeholder="Enter phone number"
+            label="Phone"
+          />
+
+          <Input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Enter password"
+            label="Password"
+          />
+
           <div className="flex flex-col">
             <label className="mb-2 font-semibold text-gray-700">Role</label>
             <select
@@ -63,6 +82,7 @@ export default function CreateUserPage() {
             >
               <option value="user">User</option>
               <option value="admin">Admin</option>
+              <option value="nurse">Nurse</option>
             </select>
           </div>
 
@@ -72,6 +92,7 @@ export default function CreateUserPage() {
               type="file"
               onChange={(e) => setImage(e.target.files?.[0] || null)}
               className="border p-2 rounded"
+              accept="image/*"
             />
           </div>
 
