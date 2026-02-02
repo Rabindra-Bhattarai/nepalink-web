@@ -7,16 +7,41 @@ import { useRouter } from "next/navigation";
 import { clearAuthCookies } from "@/lib/cookie";
 import toast from "react-hot-toast";
 
+// Example: fetch current user info from backend
+async function getCurrentUser() {
+  try {
+    const res = await fetch("http://localhost:3000/api/auth/me", {
+      credentials: "include",
+    });
+    if (!res.ok) return null;
+    return await res.json(); // expected { role: "admin", name: "...", email: "..." }
+  } catch (error) {
+    console.error("Error fetching current user:", error);
+    return null;
+  }
+}
+
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<any[]>([]);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [authorized, setAuthorized] = useState(false);
   const limit = 10;
   const router = useRouter();
 
   useEffect(() => {
-    async function loadUsers() {
+    async function init() {
+      // 🔹 Step 4: Secure access
+      const user = await getCurrentUser();
+      if (!user || user.role !== "admin") {
+        toast.error("Access denied. Admins only.");
+        router.push("/login");
+        return;
+      }
+      setAuthorized(true);
+
+      // Load users if authorized
       setLoading(true);
       const res = await fetchUsers(page, limit);
       if (res) {
@@ -25,7 +50,7 @@ export default function AdminUsersPage() {
       }
       setLoading(false);
     }
-    loadUsers();
+    init();
   }, [page]);
 
   const totalPages = Math.ceil(total / limit);
@@ -50,6 +75,14 @@ export default function AdminUsersPage() {
     }
     setLoading(false);
   };
+
+  if (!authorized) {
+    return (
+      <main className="min-h-screen flex items-center justify-center">
+        <p className="text-gray-600">Checking access...</p>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-linear-to-br from-green-50 via-white to-blue-50 p-8">
