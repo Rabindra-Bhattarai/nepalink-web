@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
+import { Button } from "../../(auth)/_components/ui/Button";
+import { Input } from "../../(auth)/_components/ui/Input";
 
 export default function UserProfilePage() {
   const router = useRouter();
@@ -56,8 +56,8 @@ export default function UserProfilePage() {
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">My Profile</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" />
-        <Input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" />
+        <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" label={""} />
+        <Input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" label={""} />
         <input type="file" onChange={(e) => setImage(e.target.files?.[0] || null)} />
         <Button type="submit">Update Profile</Button>
       </form>
