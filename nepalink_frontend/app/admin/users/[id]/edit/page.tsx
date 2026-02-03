@@ -57,7 +57,7 @@ export default function EditUserPage() {
       }
 
       toast.success("User updated successfully!");
-      router.push("/admin/users"); // ✅ redirect to Manage Users list
+      router.push("/admin/users");
     } catch (err: any) {
       toast.error("Error updating user");
     }
@@ -77,8 +77,42 @@ export default function EditUserPage() {
           <ArrowLeft className="w-6 h-6" />
         </button>
 
-        <h1 className="text-3xl font-bold text-green-700 mb-6">Edit User</h1>
+        <h1 className="text-3xl font-bold text-green-700 mb-6 text-center">Edit User</h1>
+
         <form onSubmit={handleSubmit} className="space-y-4 text-gray-700">
+          {/* Profile Photo Upload at Top */}
+          <div className="flex flex-col items-center mb-6">
+            {(preview || user.imageUrl) ? (
+              <img
+                src={
+                  preview ||
+                  `${process.env.NEXT_PUBLIC_API_BASE_URL}/uploads/${user.imageUrl}`
+                }
+                alt="User Photo"
+                className="w-32 h-32 object-cover rounded-full shadow-md mb-3"
+              />
+            ) : (
+              <div className="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center mb-3">
+                <span className="text-gray-500">No Photo</span>
+              </div>
+            )}
+            <label className="cursor-pointer bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+              Upload Photo
+              <input
+                type="file"
+                name="photo"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    setPreview(URL.createObjectURL(file));
+                  }
+                }}
+              />
+            </label>
+          </div>
+
+          {/* Other Fields */}
           <div>
             <label className="block font-semibold text-green-600">Name</label>
             <input
@@ -117,27 +151,6 @@ export default function EditUserPage() {
               <option value="member">Member</option>
               <option value="admin">Admin</option>
             </select>
-          </div>
-          <div>
-            <label className="block font-semibold text-green-600">Profile Photo</label>
-            <input
-              type="file"
-              name="photo"
-              className="w-full border rounded p-2"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) {
-                  setPreview(URL.createObjectURL(file));
-                }
-              }}
-            />
-            {(preview || user.imageUrl) && (
-              <img
-                src={preview || `/uploads/${user.imageUrl}`}
-                alt="User Photo"
-                className="w-24 h-24 object-cover rounded-full mt-2 shadow-md"
-              />
-            )}
           </div>
 
           <div className="flex justify-end mt-6">

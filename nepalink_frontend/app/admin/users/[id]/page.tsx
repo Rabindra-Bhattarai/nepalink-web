@@ -51,22 +51,25 @@ export default function UserDetailPage() {
           <ArrowLeft className="w-6 h-6" />
         </button>
 
-        <h1 className="text-3xl font-bold text-green-700 mb-6">User Details</h1>
+        <h1 className="text-3xl font-bold text-green-700 mb-6 text-center">User Details</h1>
+
+        {/* Profile Photo at Top */}
+        {user.imageUrl && (
+          <div className="flex justify-center mb-6">
+            <img
+              src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/uploads/${user.imageUrl}`}
+              alt="User Photo"
+              className="w-32 h-32 object-cover rounded-full shadow-md"
+            />
+          </div>
+        )}
+
+        {/* User Info */}
         <div className="space-y-4 text-gray-700">
           <p><span className="font-semibold text-green-600">Name:</span> {user.name}</p>
           <p><span className="font-semibold text-green-600">Email:</span> {user.email}</p>
           <p><span className="font-semibold text-green-600">Role:</span> {user.role}</p>
           <p><span className="font-semibold text-green-600">Phone:</span> {user.phone}</p>
-          {user.imageUrl && (
-            <div className="mt-6 text-center">
-              <img
-                src={`/uploads/${user.imageUrl}`}
-                alt="User Photo"
-                className="w-32 h-32 object-cover rounded-full mx-auto shadow-md"
-              />
-              <p className="mt-2 text-sm text-gray-500">Profile Photo</p>
-            </div>
-          )}
         </div>
       </div>
     </main>
