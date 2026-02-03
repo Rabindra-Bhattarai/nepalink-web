@@ -1,7 +1,8 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { clearAuthCookies } from "../../../../lib/cookie"
+import { clearAuthCookies } from "@/lib/cookie"
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
   LineChart, Line, PieChart, Pie, Cell, AreaChart, Area
@@ -35,7 +36,7 @@ const areaData = [
   { week: "Week 4", opportunities: 25 },
 ]
 
-// Simple Button component (self-contained)
+// Simple Button component
 const Button = ({
   children,
   onClick,
@@ -55,6 +56,18 @@ const Button = ({
 
 export default function DashboardPage() {
   const router = useRouter()
+  const [user, setUser] = useState<any>(null)
+
+  useEffect(() => {
+    async function loadUser() {
+      const res = await fetch("/api/auth/me", { credentials: "include" })
+      if (res.ok) {
+        const data = await res.json()
+        setUser(data)
+      }
+    }
+    loadUser()
+  }, [])
 
   const handleLogout = async () => {
     await clearAuthCookies()
@@ -68,12 +81,22 @@ export default function DashboardPage() {
         <h1 className="text-4xl font-extrabold text-blue-700 drop-shadow-sm">
           🌿 NepaLink Dashboard
         </h1>
-        <Button
-          onClick={handleLogout}
-          className="bg-red-600 hover:bg-red-700"
-        >
-          Logout
-        </Button>
+        <div className="flex gap-4">
+          <Button onClick={() => router.push("/user/profile")} className="bg-green-600 hover:bg-green-700">
+            Edit Profile
+          </Button>
+          <Button onClick={handleLogout} className="bg-red-600 hover:bg-red-700">
+            Logout
+          </Button>
+        </div>
+      </div>
+
+      {/* Greeting */}
+      <div className="w-full max-w-6xl mb-6">
+        <h2 className="text-2xl font-bold text-blue-700">
+          Welcome back, {user?.name || "Member"} 👋
+        </h2>
+        <p className="text-gray-600">Role: {user?.role || "User"}</p>
       </div>
 
       {/* Charts Grid */}

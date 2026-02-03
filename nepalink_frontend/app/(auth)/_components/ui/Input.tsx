@@ -1,26 +1,30 @@
-import { InputHTMLAttributes, forwardRef, useState } from 'react'
-import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline' // install @heroicons/react
+import { InputHTMLAttributes, forwardRef, useState } from "react";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
+import clsx from "clsx";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
-  label: string
-  error?: string
-  type?: string
+  label: string;
+  error?: string;
+  type?: string;
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ label, error, type = 'text', ...props }, ref) => {
-    const [showPassword, setShowPassword] = useState(false)
-    const isPassword = type === 'password'
+  ({ label, error, type = "text", ...props }, ref) => {
+    const [showPassword, setShowPassword] = useState(false);
+    const isPassword = type === "password";
 
     return (
-      <div className="flex flex-col">
+      <div className="flex flex-col w-full">
         <label className="text-sm font-medium mb-1 text-black">{label}</label>
         <div className="relative">
           <input
             ref={ref}
             {...props}
-            type={isPassword && showPassword ? 'text' : type}
-            className="border border-black rounded-md px-3 py-2 text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+            type={isPassword && showPassword ? "text" : type}
+            className={clsx(
+              "border border-gray-400 rounded-md px-3 py-2 text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full",
+              error && "border-red-500 focus:ring-red-500"
+            )}
           />
           {isPassword && (
             <button
@@ -38,8 +42,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         </div>
         {error && <span className="text-red-500 text-xs mt-1">{error}</span>}
       </div>
-    )
+    );
   }
-)
+);
 
-Input.displayName = 'Input'
+Input.displayName = "Input";
