@@ -61,22 +61,22 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* Action Buttons */}
-      <div className="mt-12 flex gap-6">
-        <Button
-          onClick={() => router.push("/admin/users")}
-          className="bg-blue-600 text-white hover:bg-blue-700"
-        >
-          Manage Users
-        </Button>
-        <Button
-          onClick={() => router.push("/admin/users/create")}
-          className="bg-green-600 text-white hover:bg-green-700"
-        >
-          Create User
-        </Button>
-        
-      </div>
+    {/* Action Buttons */}
+    <div className="mt-12 flex gap-6">
+    <Button
+        onClick={() => router.push("/admin/users")}
+        className="bg-blue-600 text-white hover:bg-blue-700"
+    >
+        Manage Users
+    </Button>
+    <Button
+        onClick={() => router.push("/admin/users/create")}
+        className="bg-green-600 text-white hover:bg-green-700"
+    >
+        Create User
+    </Button>
+    </div>
+
 
       {/* Footer */}
       <footer className="mt-12 text-sm text-gray-500">

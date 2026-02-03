@@ -7,14 +7,15 @@ import { useRouter } from "next/navigation";
 import { clearAuthCookies } from "@/lib/cookie";
 import toast from "react-hot-toast";
 
-// Example: fetch current user info from backend
+//  fetch current user info from backend
 async function getCurrentUser() {
   try {
-    const res = await fetch("http://localhost:3000/api/auth/me", {
+    const res = await fetch("/api/auth/me", {
       credentials: "include",
     });
     if (!res.ok) return null;
-    return await res.json(); // expected { role: "admin", name: "...", email: "..." }
+    const result = await res.json();
+    return result.data; //  unwrap the data field
   } catch (error) {
     console.error("Error fetching current user:", error);
     return null;

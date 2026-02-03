@@ -44,7 +44,7 @@ export const useLoginForm = () => {
           } else {
             router.push("/user/dashboard");
           }
-        }, 1000);
+        }, 500);
       } else {
         setServerError(res.message);
       }

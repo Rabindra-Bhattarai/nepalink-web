@@ -1,44 +1,74 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+import { ArrowLeft } from "lucide-react"; // icon library
 
 export default function UserDetailPage() {
   const { id } = useParams();
+  const router = useRouter();
   const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function loadUser() {
-      const res = await fetch(`/api/admin/users/${id}`, {
-        method: "GET",
-        credentials: "include",
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setUser(data);
+      try {
+        const res = await fetch(`/api/admin/users/${id}`, {
+          method: "GET",
+          credentials: "include",
+        });
+        const result = await res.json();
+
+        if (!res.ok || !result.success) {
+          setError(result.message || "User not found");
+          setLoading(false);
+          return;
+        }
+
+        setUser(result.data);
+        setLoading(false);
+      } catch (err: any) {
+        setError("Failed to fetch user");
+        setLoading(false);
       }
     }
+
     if (id) loadUser();
   }, [id]);
 
-  if (!user) return <p>Loading user...</p>;
+  if (loading) return <p className="text-gray-600">Loading user...</p>;
+  if (error) return <p className="text-red-500">{error}</p>;
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">User Details</h1>
-      <div className="border p-4 rounded">
-        <p><strong>Name:</strong> {user.name}</p>
-        <p><strong>Email:</strong> {user.email}</p>
-        <p><strong>Role:</strong> {user.role}</p>
-        <p><strong>Phone:</strong> {user.phone}</p>
-        {user.photo && (
-          <div className="mt-4">
-            <strong>Photo:</strong>
-            <br />
-            <img src={user.photo} alt="User Photo" className="w-32 h-32 object-cover rounded-full mt-2" />
-          </div>
-        )}
+    <main className="min-h-screen bg-linear-to-br from-green-50 via-white to-blue-50 p-8 flex justify-center">
+      <div className="bg-white rounded-xl shadow-lg p-8 max-w-lg w-full relative">
+        {/* Back Icon in top-right */}
+        <button
+          onClick={() => router.push("/admin/users")}
+          className="absolute top-4 right-4 text-blue-600 hover:text-blue-800"
+        >
+          <ArrowLeft className="w-6 h-6" />
+        </button>
+
+        <h1 className="text-3xl font-bold text-green-700 mb-6">User Details</h1>
+        <div className="space-y-4 text-gray-700">
+          <p><span className="font-semibold text-green-600">Name:</span> {user.name}</p>
+          <p><span className="font-semibold text-green-600">Email:</span> {user.email}</p>
+          <p><span className="font-semibold text-green-600">Role:</span> {user.role}</p>
+          <p><span className="font-semibold text-green-600">Phone:</span> {user.phone}</p>
+          {user.imageUrl && (
+            <div className="mt-6 text-center">
+              <img
+                src={`/uploads/${user.imageUrl}`}
+                alt="User Photo"
+                className="w-32 h-32 object-cover rounded-full mx-auto shadow-md"
+              />
+              <p className="mt-2 text-sm text-gray-500">Profile Photo</p>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </main>
   );
 }
