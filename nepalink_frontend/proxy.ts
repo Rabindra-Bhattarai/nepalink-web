@@ -13,35 +13,35 @@ export async function proxy(req: NextRequest) {
   const isAdminPath = pathname.startsWith("/admin");
   const isUserPath = pathname.startsWith("/user");
 
-  // Redirect to login if not authenticated and not accessing a public path
+  //  Redirect to login if not authenticated and not accessing a public path
   if (!token && !isPublicPath) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
-  // Role-based redirects
+  //  Role-based access control
   if (token && user) {
-    // Admin routes must be accessed only by admins
+    // Admin-only access
     if (isAdminPath && user.role !== "admin") {
       return NextResponse.redirect(new URL("/user/dashboard", req.url));
     }
 
-    // User routes must be accessed only by logged-in users (admins can also access)
+    // User-only access (admins allowed too)
     if (isUserPath && user.role !== "user" && user.role !== "admin") {
       return NextResponse.redirect(new URL("/login", req.url));
     }
 
-    // Redirect after login based on role
-    if (pathname === "/login" && token && user) {
-      if (user.role === "admin") {
-        return NextResponse.redirect(new URL("/admin/dashboard", req.url));
-      } else {
-        return NextResponse.redirect(new URL("/user/dashboard", req.url));
-      }
-}
+    //  Prevent redirect loop from /login
+    if (pathname === "/login") {
+      const targetPath = user.role === "admin" ? "/admin/dashboard" : "/user/dashboard";
 
+      // Only redirect if not already at the target
+      if (!pathname.startsWith(targetPath)) {
+        return NextResponse.redirect(new URL(targetPath, req.url));
+      }
+    }
   }
 
-  // Allow access to all other paths
+  //  Allow access to all other paths
   return NextResponse.next();
 }
 

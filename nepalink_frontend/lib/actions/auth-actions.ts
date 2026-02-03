@@ -1,16 +1,16 @@
 "use server";
 import { register, login } from "../api/auth";
-import { setAuthToken, setUserData } from "../cookie";
+import { cookies } from "next/headers"; // use directly here
 
 export const handleRegister = async (formData: any) => {
   try {
-    console.log("Calling register API with:", formData);
     const res = await register(formData);
-    console.log("Register API response:", res);
 
     if (res.success) {
-      await setAuthToken(res.token);
-      await setUserData(res.data);
+      const cookieStore = await cookies();
+      cookieStore.set("auth_token", res.token);
+      cookieStore.set("user_data", JSON.stringify(res.data));
+
       return {
         success: true,
         data: res.data,
@@ -27,9 +27,12 @@ export const handleRegister = async (formData: any) => {
 export const handleLogin = async (formData: any) => {
   try {
     const res = await login(formData);
+
     if (res.success) {
-      await setAuthToken(res.token);
-      await setUserData(res.data);
+      const cookieStore = await cookies();
+      cookieStore.set("auth_token", res.token);
+      cookieStore.set("user_data", JSON.stringify(res.data));
+
       return {
         success: true,
         data: res.data,
