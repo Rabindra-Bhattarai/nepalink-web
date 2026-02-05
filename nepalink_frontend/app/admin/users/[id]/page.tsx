@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowLeft } from "lucide-react"; // icon library
+import { ArrowLeft } from "lucide-react"; 
 
 export default function UserDetailPage() {
   const { id } = useParams();
