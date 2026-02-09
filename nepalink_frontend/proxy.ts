@@ -26,7 +26,7 @@ export async function proxy(req: NextRequest) {
     }
 
     // User-only access (admins allowed too)
-    if (isUserPath && user.role !== "user" && user.role !== "admin") {
+    if (isUserPath && user.role !== 'nurse' && user.role !== "member" && user.role !== "admin") {
       return NextResponse.redirect(new URL("/login", req.url));
     }
 

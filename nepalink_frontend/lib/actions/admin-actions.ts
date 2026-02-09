@@ -1,6 +1,17 @@
-export async function fetchUsers(page: number = 1, limit: number = 10) {
+export async function fetchUsers(
+  page: number = 1,
+  limit: number = 10,
+  search?: string,
+  role?: string
+) {
   try {
-    const res = await fetch(`http://localhost:3000/api/admin/users?page=${page}&limit=${limit}`, {
+    const params = new URLSearchParams();
+    params.append("page", String(page));
+    params.append("limit", String(limit));
+    if (search) params.append("name", search);
+    if (role) params.append("role", role);
+
+    const res = await fetch(`http://localhost:3000/api/admin/users?${params.toString()}`, {
       method: "GET",
       credentials: "include",
     });
@@ -21,7 +32,7 @@ export async function fetchUsers(page: number = 1, limit: number = 10) {
   }
 }
 
-// New function for deleting a user
+// Delete user
 export async function deleteUser(userId: string) {
   try {
     const res = await fetch(`http://localhost:3000/api/admin/users/${userId}`, {
