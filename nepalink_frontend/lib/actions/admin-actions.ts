@@ -1,3 +1,4 @@
+// Fetch all users
 export async function fetchUsers(
   page: number = 1,
   limit: number = 10,
@@ -46,6 +47,60 @@ export async function deleteUser(userId: string) {
     return data; // { success: true, message: "User deleted successfully" }
   } catch (error) {
     console.error("Error deleting user:", error);
+    return null;
+  }
+}
+
+// Fetch all bookings
+export async function fetchBookings() {
+  try {
+    const res = await fetch("http://localhost:3000/api/admin/bookings", {
+      method: "GET",
+      credentials: "include",
+    });
+
+    if (!res.ok) throw new Error("Failed to fetch bookings");
+
+    const data = await res.json();
+    return data.data; // array of bookings
+  } catch (error) {
+    console.error("Error fetching bookings:", error);
+    return null;
+  }
+}
+
+// Fetch nurse workload
+export async function fetchWorkload() {
+  try {
+    const res = await fetch("http://localhost:3000/api/admin/nurse-workload", {
+      method: "GET",
+      credentials: "include",
+    });
+
+    if (!res.ok) throw new Error("Failed to fetch nurse workload");
+
+    const data = await res.json();
+    return data.data; // array of { nurse, bookings, activities }
+  } catch (error) {
+    console.error("Error fetching workload:", error);
+    return null;
+  }
+}
+
+// Fetch analytics
+export async function fetchAnalytics() {
+  try {
+    const res = await fetch("http://localhost:3000/api/admin/analytics", {
+      method: "GET",
+      credentials: "include",
+    });
+
+    if (!res.ok) throw new Error("Failed to fetch analytics");
+
+    const data = await res.json();
+    return data.data; // { totalBookings, accepted, declined, acceptanceRate, ... }
+  } catch (error) {
+    console.error("Error fetching analytics:", error);
     return null;
   }
 }
