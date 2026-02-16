@@ -72,7 +72,7 @@ export async function fetchBookings() {
 // Fetch nurse workload
 export async function fetchWorkload() {
   try {
-    const res = await fetch("http://localhost:3000/api/admin/nurse-workload", {
+    const res = await fetch("http://localhost:3000/api/admin/nurses/workload", {
       method: "GET",
       credentials: "include",
     });
