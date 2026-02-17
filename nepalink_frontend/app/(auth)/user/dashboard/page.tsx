@@ -1,63 +1,75 @@
-// "use client";
+"use client";
+import { useEffect, useState } from "react";
+import { fetchMemberBookings } from "@/lib/api/member";
+import UserSidebar from "../components/UserSidebar";
 
-// // import { useBookings } from "@/app/(auth)/user/dashboard/hooks/useBookings";
-// import BookingForm from "../components/BookingForm";
-// import BookingList from "../components/BookingList";
-// import ActiveSession from "../components/ActivitySession";
-// import CareFeed from "../components/CareFeed";
-// import VitalStats from "../components/VitalStats";
+export default function DashboardPage() {
+  const [bookings, setBookings] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-// export default function MemberDashboard() {
-//   const memberId = "demo-member-id"; // replace with real auth context
-//   const { bookings, loading, error } = useBookings(memberId);
+  useEffect(() => {
+    const loadBookings = async () => {
+      try {
+        const data = await fetchMemberBookings("USER_OBJECT_ID"); // replace with logged-in user._id
+        setBookings(data);
+      } catch (err: any) {
+        console.error(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadBookings();
+  }, []);
 
-//   const activeBooking = bookings.find((b) => b.status === "accepted") || null;
+  const getStatusStyle = (status: string) => {
+    switch (status.toLowerCase()) {
+      case "completed": return "bg-green-100 text-green-700 border-green-200";
+      case "pending": return "bg-amber-100 text-amber-700 border-amber-200";
+      case "cancelled": return "bg-red-100 text-red-700 border-red-200";
+      default: return "bg-slate-100 text-slate-700 border-slate-200";
+    }
+  };
 
-//   return (
-//     <div className="min-h-screen bg-gray-50 px-6 py-10">
-//       <div className="max-w-5xl mx-auto space-y-10">
-//         {/* Header */}
-//         <header className="flex justify-between items-center">
-//           <h1 className="text-3xl font-bold text-slate-900">Member Dashboard</h1>
-//         </header>
+  if (loading) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-[#fcfdfd]">
+        <p className="text-slate-500 animate-pulse font-medium">Loading dashboard...</p>
+      </div>
+    );
+  }
 
-//         {/* Booking Form + List */}
-//         <section className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-6">
-//           <h2 className="text-xl font-semibold text-slate-800">Bookings</h2>
-//           <BookingForm memberId={memberId} onSuccess={() => console.log("Booking created")} />
-//           <BookingList memberId={memberId} />
-//         </section>
-
-//         {/* Active Session */}
-//         <section className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-//           <h2 className="text-xl font-semibold text-slate-800">Active Session</h2>
-//           {activeBooking ? (
-//             <ActiveSession booking={activeBooking} />
-//           ) : (
-//             <p className="text-slate-500 text-sm">No active session at the moment.</p>
-//           )}
-//         </section>
-
-//         {/* Care Feed */}
-//         <section className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-//           <h2 className="text-xl font-semibold text-slate-800">Care Feed</h2>
-//           {activeBooking ? (
-//             <CareFeed bookingId={activeBooking._id} />
-//           ) : (
-//             <p className="text-slate-500 text-sm">No care activities yet.</p>
-//           )}
-//         </section>
-
-//         {/* Vital Stats */}
-//         <section className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-//           <h2 className="text-xl font-semibold text-slate-800">Vital Stats</h2>
-//           <VitalStats healthScore={82} summary="Health status based on recent updates." />
-//         </section>
-
-//         {/* Feedback */}
-//         {loading && <p className="text-slate-500 text-sm">Loading...</p>}
-//         {error && <p className="text-red-500 text-sm">Error: {error}</p>}
-//       </div>
-//     </div>
-//   );
-// }
+  return (
+    <div className="min-h-screen bg-[#f8fafc] flex">
+      <UserSidebar />
+      <main className="flex-1 p-10">
+        <h1 className="text-3xl font-extrabold text-slate-900 mb-6">Dashboard</h1>
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+          <table className="w-full border-collapse">
+            <thead>
+              <tr className="bg-slate-50 border-b border-slate-200">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase">Booking ID</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase">Date</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase">Status</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {bookings.map((b) => (
+                <tr key={b._id}>
+                  <td className="px-6 py-4 text-sm font-mono text-slate-500">#{b._id.slice(-6)}</td>
+                  <td className="px-6 py-4 text-sm text-slate-600">
+                    {b.date ? new Date(b.date).toLocaleDateString("en-US") : "—"}
+                  </td>
+                  <td className="px-6 py-4 text-sm">
+                    <span className={`px-2.5 py-1 rounded-full text-xs font-bold border ${getStatusStyle(b.status)}`}>
+                      {b.status}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+  );
+}
