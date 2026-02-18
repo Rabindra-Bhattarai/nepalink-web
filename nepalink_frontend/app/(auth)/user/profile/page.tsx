@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import axiosInstance from "@/lib/api/axios";
 import { API } from "@/lib/api/endpoints";
 import { getAuthToken, getUserData, setUserData } from "@/lib/cookie";
+import { getUserById } from "@/lib/api/user";
 import { Camera, User, Phone, Mail, ShieldCheck, Loader2 } from "lucide-react";
 
 export default function ProfilePage() {
@@ -12,10 +13,25 @@ export default function ProfilePage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
+  // ✅ Fetch user by ID from backend
   useEffect(() => {
     const fetchUser = async () => {
-      const data = await getUserData();
-      setUser(data);
+      try {
+        const token = await getAuthToken();
+        const userData = await getUserData(); // cookie/localStorage
+        console.log("UserData from cookie:", userData);
+
+        if (!userData?._id) {
+          setError("User ID not found in cookie");
+          return;
+        }
+
+        const res = await getUserById(userData._id);
+        setUser(res.data); // backend returns { success, data }
+        await setUserData(res.data); // keep cookie in sync
+      } catch (err: any) {
+        setError(err.response?.data?.message || "Failed to load user profile");
+      }
     };
     fetchUser();
   }, []);
@@ -74,11 +90,13 @@ export default function ProfilePage() {
     }
   };
 
-  if (!user) return (
-    <div className="flex items-center justify-center min-h-100">
-      <Loader2 className="animate-spin text-blue-600" size={32} />
-    </div>
-  );
+  if (!user) {
+    return (
+      <div className="flex items-center justify-center min-h-100">
+        <Loader2 className="animate-spin text-blue-600" size={32} />
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-4xl mx-auto p-4 md:p-8 space-y-8">
@@ -98,10 +116,12 @@ export default function ProfilePage() {
             <div className="relative group">
               <div className="w-32 h-32 rounded-3xl border-4 border-white bg-slate-100 overflow-hidden shadow-xl">
                 <img
-                  src={`/uploads/${user.imageUrl || "default-profile.png"}`}
-                  alt="Profile"
-                  className="w-full h-full object-cover"
-                />
+  src={user.imageUrl ? `/uploads/${user.imageUrl}` : "/uploads/default-profile.png"}
+  alt="Profile"
+  className="w-full h-full object-cover"
+/>
+
+                
               </div>
               <label className="absolute bottom-2 right-2 p-2 bg-blue-600 text-white rounded-xl shadow-lg cursor-pointer hover:bg-blue-700 transition-all group-hover:scale-110">
                 <Camera size={18} />
@@ -132,8 +152,7 @@ export default function ProfilePage() {
                 type="text"
                 name="name"
                 defaultValue={user.name}
-                style={{ color: "#0f172a" }}
-                className="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900! font-semibold focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all placeholder:text-slate-400"
+                className="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 font-semibold focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all placeholder:text-slate-400"
                 placeholder="Enter your full name"
               />
             </div>
@@ -146,8 +165,7 @@ export default function ProfilePage() {
                 type="text"
                 name="phone"
                 defaultValue={user.phone}
-                style={{ color: "#0f172a" }}
-                className="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900! font-semibold focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all placeholder:text-slate-400"
+                className="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 font-semibold focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all placeholder:text-slate-400"
                 placeholder="e.g. +1 234 567 890"
               />
             </div>
@@ -160,8 +178,7 @@ export default function ProfilePage() {
                 type="email"
                 disabled
                 value={user.email || "patient@healthcare.com"}
-                style={{ color: "#475569" }}
-                className="w-full p-3 bg-slate-100 border border-slate-200 rounded-2xl text-slate-600! cursor-not-allowed italic font-medium"
+                className="w-full p-3 bg-slate-100 border border-slate-200 rounded-2xl cursor-not-allowed italic font-medium text-slate-900"
               />
               <p className="text-[10px] text-slate-500 font-medium">Email cannot be changed online for security reasons.</p>
             </div>
@@ -177,8 +194,6 @@ export default function ProfilePage() {
               </button>
             </div>
           </form>
-
-
         </div>
       </div>
     </div>
