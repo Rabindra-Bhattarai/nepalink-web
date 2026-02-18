@@ -1,6 +1,7 @@
 "use server";
 import { register, login } from "../api/auth";
 import { cookies } from "next/headers";
+import { setUserData } from "../cookie";
 
 export const handleRegister = async (formData: any) => {
   try {
@@ -10,6 +11,8 @@ export const handleRegister = async (formData: any) => {
       const cookieStore = await cookies();
       // Store only the token securely
       cookieStore.set("auth_token", res.token, { httpOnly: true, secure: true });
+
+      await setUserData(res.data);
 
       return {
         success: true,
@@ -32,6 +35,8 @@ export const handleLogin = async (formData: any) => {
       const cookieStore = await cookies();
       // Store only the token securely
       cookieStore.set("auth_token", res.token, { httpOnly: true, secure: true });
+
+      await setUserData(res.data);
 
       return {
         success: true,
