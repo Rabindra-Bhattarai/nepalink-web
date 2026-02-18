@@ -1,77 +1,90 @@
 "use client";
-import { useEffect, useState } from "react";
-import { fetchMemberBookings } from "@/lib/api/member";
-import UserSidebar from "../components/UserSidebar";
+
+import { useState } from "react";
+import { useBookings } from "@/hooks/useBookings";
+import BookingList from "../dashboard/components/BookingList";
+import LoadingSkeleton from "../dashboard/components/LoadingSkeleton";
+import { CalendarDays, Filter, Plus } from "lucide-react";
 
 export default function BookingsPage() {
-  const [bookings, setBookings] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { bookings, loading, error } = useBookings();
+  const [activeTab, setActiveTab] = useState<"upcoming" | "past">("upcoming");
 
-  useEffect(() => {
-    const loadBookings = async () => {
-      try {
-        const data = await fetchMemberBookings("USER_OBJECT_ID");
-        setBookings(data);
-      } catch (err: any) {
-        console.error(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadBookings();
-  }, []);
+  // Functional Enhancement: Split bookings into categories
+  const upcomingBookings = bookings?.filter(b => b.status === "accepted" || b.status === "pending") || [];
+  const pastBookings = bookings?.filter(b => b.status === "declined") || [];
 
-  const getStatusStyle = (status: string) => {
-    switch (status.toLowerCase()) {
-      case "completed": return "bg-green-100 text-green-700 border-green-200";
-      case "pending": return "bg-amber-100 text-amber-700 border-amber-200";
-      case "cancelled": return "bg-red-100 text-red-700 border-red-200";
-      default: return "bg-slate-100 text-slate-700 border-slate-200";
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="flex h-screen items-center justify-center bg-[#fcfdfd]">
-        <p className="text-slate-500 animate-pulse font-medium">Loading bookings...</p>
-      </div>
-    );
-  }
+  if (loading) return <LoadingSkeleton />;
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] flex">
-      <UserSidebar />
-      <main className="flex-1 p-10">
-        <h1 className="text-3xl font-extrabold text-slate-900 mb-6">My Bookings</h1>
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-          <table className="w-full border-collapse">
-            <thead>
-              <tr className="bg-slate-50 border-b border-slate-200">
-                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase">Booking ID</th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase">Nurse</th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase">Date</th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase">Status</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {bookings.map((b) => (
-                <tr key={b._id}>
-                  <td className="px-6 py-4 text-sm font-mono text-slate-500">#{b._id.slice(-6)}</td>
-                  <td className="px-6 py-4 text-sm text-slate-600">{b.nurseId?.name || "—"}</td>
-                  <td className="px-6 py-4 text-sm text-slate-600">
-                    {b.date ? new Date(b.date).toLocaleDateString("en-US") : "—"}
-                  </td>
-                  <td className="px-6 py-4 text-sm">
-                    <span className={`px-2.5 py-1 rounded-full text-xs font-bold border ${getStatusStyle(b.status)}`}>
-                      {b.status}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+    <div className="max-w-5xl mx-auto p-6 space-y-8">
+      {/* Header with Quick Action */}
+      <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-100 pb-6">
+        <div>
+          <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-3">
+            <CalendarDays className="text-blue-600" size={32} />
+            My Appointments
+          </h1>
+          <p className="text-slate-500 mt-1">Manage your nursing visits and consultation schedule.</p>
         </div>
-      </main>
+        
+        <button className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-bold shadow-lg shadow-blue-200 transition-all active:scale-95">
+          <Plus size={20} />
+          New Booking
+        </button>
+      </header>
+
+      {error ? (
+        <div className="p-4 bg-red-50 border border-red-100 rounded-2xl">
+          <p className="text-red-600 font-medium flex items-center gap-2">
+            <span>⚠️</span> {error}
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-6">
+          {/* Custom Tabs UI */}
+          <div className="flex items-center gap-2 p-1 bg-slate-100 w-fit rounded-xl">
+            <button 
+              onClick={() => setActiveTab("upcoming")}
+              className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${
+                activeTab === "upcoming" 
+                ? "bg-white text-blue-600 shadow-sm" 
+                : "text-slate-500 hover:text-slate-700"
+              }`}
+            >
+              Upcoming ({upcomingBookings.length})
+            </button>
+            <button 
+              onClick={() => setActiveTab("past")}
+              className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${
+                activeTab === "past" 
+                ? "bg-white text-blue-600 shadow-sm" 
+                : "text-slate-500 hover:text-slate-700"
+              }`}
+            >
+              Past / History ({pastBookings.length})
+            </button>
+          </div>
+
+          {/* List Display */}
+          <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+            <div className="p-2">
+              <BookingList bookings={activeTab === "upcoming" ? upcomingBookings : pastBookings} />
+            </div>
+            
+            {/* Empty State Enhancement */}
+            {((activeTab === "upcoming" && upcomingBookings.length === 0) || 
+              (activeTab === "past" && pastBookings.length === 0)) && (
+              <div className="py-20 text-center">
+                <div className="bg-slate-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Filter className="text-slate-300" />
+                </div>
+                <p className="text-slate-500 font-medium">No {activeTab} bookings found.</p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
