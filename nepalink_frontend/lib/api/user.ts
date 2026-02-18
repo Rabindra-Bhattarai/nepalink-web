@@ -2,6 +2,14 @@ import axiosInstance from "./axios";
 import { API } from "./endpoints";
 import { getAuthToken } from "../cookie";
 
+export const getUserById = async (userId: string) => {
+  const token = await getAuthToken();
+  const res = await axiosInstance.get(`${API.USERS}/${userId}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return res.data;
+};
+
 export const updateProfile = async (userId: string, data: any) => {
   const token = await getAuthToken();
   const res = await axiosInstance.put(`${API.USERS}/${userId}`, data, {
