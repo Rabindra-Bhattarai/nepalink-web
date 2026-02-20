@@ -5,7 +5,8 @@ import axiosInstance from "@/lib/api/axios";
 import { API } from "@/lib/api/endpoints";
 import { getAuthToken, getUserData, setUserData } from "@/lib/cookie";
 import { getUserById } from "@/lib/api/user";
-import { Camera, User, Phone, Mail, ShieldCheck, Loader2 } from "lucide-react";
+import { Camera, ShieldCheck, Loader2 } from "lucide-react";
+import ProfileForm from "./components/ProfileForm";
 
 export default function ProfilePage() {
   const [user, setUser] = useState<any>(null);
@@ -18,8 +19,7 @@ export default function ProfilePage() {
     const fetchUser = async () => {
       try {
         const token = await getAuthToken();
-        const userData = await getUserData(); // cookie/localStorage
-        console.log("UserData from cookie:", userData);
+        const userData = await getUserData();
 
         if (!userData?._id) {
           setError("User ID not found in cookie");
@@ -28,7 +28,7 @@ export default function ProfilePage() {
 
         const res = await getUserById(userData._id);
         setUser(res.data); // backend returns { success, data }
-        await setUserData(res.data); // keep cookie in sync
+        await setUserData(res.data);
       } catch (err: any) {
         setError(err.response?.data?.message || "Failed to load user profile");
       }
@@ -36,17 +36,18 @@ export default function ProfilePage() {
     fetchUser();
   }, []);
 
+  // ✅ Handle avatar upload (frontend now matches backend)
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files?.[0]) return;
 
     const formData = new FormData();
-    formData.append("file", e.target.files[0]);
+    formData.append("photo", e.target.files[0]); // backend expects "photo"
 
     try {
       setLoading(true);
       setError(null);
       const token = await getAuthToken();
-      const res = await axiosInstance.put(`${API.USERS}/${user._id}/profile-pic`, formData, {
+      const res = await axiosInstance.post(`${API.USERS}/${user._id}/upload`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
@@ -62,14 +63,8 @@ export default function ProfilePage() {
     }
   };
 
-  const handleUpdateProfile = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const form = e.currentTarget;
-    const formData = {
-      name: (form.elements.namedItem("name") as HTMLInputElement).value,
-      phone: (form.elements.namedItem("phone") as HTMLInputElement).value,
-    };
-
+  // ✅ Handle profile update
+  const handleUpdateProfile = async (formData: { name: string; phone: string }) => {
     try {
       setLoading(true);
       setError(null);
@@ -114,14 +109,16 @@ export default function ProfilePage() {
           <div className="relative -top-12 flex flex-col md:flex-row md:items-end gap-6">
             {/* Avatar Upload */}
             <div className="relative group">
-              <div className="w-32 h-32 rounded-3xl border-4 border-white bg-slate-100 overflow-hidden shadow-xl">
-                <img
-  src={user.imageUrl ? `/uploads/${user.imageUrl}` : "/uploads/default-profile.png"}
-  alt="Profile"
-  className="w-full h-full object-cover"
-/>
-
-                
+              <div className="w-32 h-32 rounded-3xl border-4 border-white bg-slate-100 overflow-hidden shadow-xl flex items-center justify-center">
+                {user.imageUrl ? (
+                  <img
+                    src={`http://localhost:3000/uploads/${user.imageUrl}`}
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <span className="text-slate-400 text-sm italic">No photo uploaded</span>
+                )}
               </div>
               <label className="absolute bottom-2 right-2 p-2 bg-blue-600 text-white rounded-xl shadow-lg cursor-pointer hover:bg-blue-700 transition-all group-hover:scale-110">
                 <Camera size={18} />
@@ -138,62 +135,14 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          {/* Error/Success Feedback */}
-          {error && <div className="p-4 bg-red-50 text-red-600 rounded-2xl text-sm border border-red-100 mb-6">{error}</div>}
-          {success && <div className="p-4 bg-emerald-50 text-emerald-600 rounded-2xl text-sm border border-emerald-100 mb-6 font-bold">✓ Profile updated successfully</div>}
-
-          {/* Form */}
-          <form onSubmit={handleUpdateProfile} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
-                <User size={16} className="text-blue-600" /> Full Name
-              </label>
-              <input
-                type="text"
-                name="name"
-                defaultValue={user.name}
-                className="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 font-semibold focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all placeholder:text-slate-400"
-                placeholder="Enter your full name"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
-                <Phone size={16} className="text-blue-600" /> Phone Number
-              </label>
-              <input
-                type="text"
-                name="phone"
-                defaultValue={user.phone}
-                className="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 font-semibold focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all placeholder:text-slate-400"
-                placeholder="e.g. +1 234 567 890"
-              />
-            </div>
-
-            <div className="space-y-2 md:col-span-2">
-              <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
-                <Mail size={16} className="text-slate-400" /> Email Address
-              </label>
-              <input
-                type="email"
-                disabled
-                value={user.email || "patient@healthcare.com"}
-                className="w-full p-3 bg-slate-100 border border-slate-200 rounded-2xl cursor-not-allowed italic font-medium text-slate-900"
-              />
-              <p className="text-[10px] text-slate-500 font-medium">Email cannot be changed online for security reasons.</p>
-            </div>
-
-            <div className="md:col-span-2 pt-4">
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full md:w-fit bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-2xl font-bold shadow-lg shadow-blue-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-              >
-                {loading && <Loader2 className="animate-spin" size={18} />}
-                {loading ? "Saving Changes..." : "Save Profile"}
-              </button>
-            </div>
-          </form>
+          {/* Profile Form Component */}
+          <ProfileForm
+            user={user}
+            onSubmit={handleUpdateProfile}
+            loading={loading}
+            error={error}
+            success={success}
+          />
         </div>
       </div>
     </div>
