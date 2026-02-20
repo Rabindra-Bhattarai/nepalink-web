@@ -1,38 +1,30 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import axiosInstance from "@/lib/api/axios";
-import { getAuthToken } from "@/lib/cookie";
+import { fetchAnalytics } from "@/lib/actions/admin-actions";
 
-export function useActivities() {
-  const [activities, setActivities] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
+export function useAnalytics() {
+  const [analytics, setAnalytics] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchActivities = async () => {
+    async function loadAnalytics() {
       try {
-        setLoading(true);
-        setError(null);
-
-        const token = await getAuthToken();
-        const res = await axiosInstance.get("/api/member/activities", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        // backend returns { success: true, data: [...] }
-        setActivities(res.data.data);
+        const res = await fetchAnalytics();
+        if (!res) {
+          setError("Failed to load analytics");
+          return;
+        }
+        setAnalytics(res);
       } catch (err: any) {
-        setError(err.response?.data?.message || "Failed to load activities");
+        setError(err.message || "Error fetching analytics");
       } finally {
         setLoading(false);
       }
-    };
-
-    fetchActivities();
+    }
+    loadAnalytics();
   }, []);
 
-  return { activities, loading, error };
+  return { analytics, loading, error };
 }
