@@ -27,7 +27,7 @@ export function useUserForm(userId: string | undefined) {
 
         setUser(result.data);
         setLoading(false);
-      } catch {
+      } catch (err: any) {
         setError("Failed to fetch user");
         setLoading(false);
       }

@@ -5,7 +5,7 @@ import { User as UserIcon, BadgeCheck } from "lucide-react";
 export default function UserProfileCard({ user, id }: { user: any; id: string }) {
   return (
     <div className="bg-white rounded-[2.5rem] shadow-xl border border-slate-100 overflow-hidden">
-      <div className="h-40 bg-gradient-to-r from-green-600 via-green-500 to-blue-600 relative">
+      <div className="h-40 bg-linear-to-r from-green-600 via-green-500 to-blue-600 relative">
         <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
       </div>
 
