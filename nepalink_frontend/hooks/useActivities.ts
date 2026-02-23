@@ -1,30 +1,72 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { fetchAnalytics } from "@/lib/actions/admin-actions";
+import { getMyActivities } from "@/lib/api/member";
 
-export function useAnalytics() {
-  const [analytics, setAnalytics] = useState<any>(null);
+export interface Activity {
+  _id: string;
+  description?: string;          // optional, for flexibility
+  notes?: string;                // optional, for logs
+  date: string;                  // main timestamp field
+  performedAt?: string;          // optional, for chart/timeline
+  status: "pending" | "completed" | "cancelled";
+  nurseId?: { name?: string; email?: string; role?: string } | string;
+  memberId?: { name?: string; email?: string; role?: string } | string;
+  vitalSigns?: {
+    bloodPressure?: string;
+    heartRate?: number;
+    temperature?: number;
+    spo2?: number;
+  };
+  dailyCare?: {
+    meals?: string;
+    hydration?: string;
+    hygiene?: string;
+    mobility?: string;
+    sleepQuality?: string;
+  };
+  medicalTracking?: {
+    medication?: string;
+    painLevel?: number;
+    woundCondition?: string;
+    bowelBladder?: string;
+  };
+  collaboration?: {
+    suppliesInventory?: string;
+    shiftSummary?: string;
+    parentInstructions?: string;
+    significantEvents?: string;
+  };
+  safetyVerification?: {
+    equipmentCheck?: string;
+    emergencyContactSync?: boolean;
+    jointSignature?: boolean;
+  };
+}
+
+export function useActivities() {
+  const [activities, setActivities] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    async function loadAnalytics() {
-      try {
-        const res = await fetchAnalytics();
-        if (!res) {
-          setError("Failed to load analytics");
-          return;
-        }
-        setAnalytics(res);
-      } catch (err: any) {
-        setError(err.message || "Error fetching analytics");
-      } finally {
-        setLoading(false);
-      }
+  const fetchActivities = async () => {
+    try {
+      setLoading(true);
+      const res = await getMyActivities();
+      // backend returns { success: true, data: [...] }
+      setActivities(res.data || []);
+    } catch (err: any) {
+      setError(
+        err.response?.data?.message || err.message || "Failed to fetch activities"
+      );
+    } finally {
+      setLoading(false);
     }
-    loadAnalytics();
+  };
+
+  useEffect(() => {
+    fetchActivities();
   }, []);
 
-  return { analytics, loading, error };
+  return { activities, loading, error, refresh: fetchActivities };
 }
