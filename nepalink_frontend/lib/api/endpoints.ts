@@ -1,16 +1,18 @@
 export const API = {
   AUTH: {
-    REGISTER: "/api/auth/register",
-    LOGIN: "/api/auth/login",
-    ME: "/api/auth/me",
+    REGISTER: "/auth/register",
+    LOGIN: "/auth/login",
+    ME: "/auth/me",
   },
-
-  BOOKINGS: "/api/bookings",
-  ACTIVITIES: "/api/activities", // for booking-specific activities
-  USERS: "/api/users",
-
+  BOOKINGS: "/bookings",
+  ACTIVITIES: {
+    CREATE: "/activities",
+    UPDATE_STATUS: (id: string) => `/activities/${id}/status`,
+    MEMBER: "/activities/my",
+    NURSE: "/activities/assigned",
+  },
+  USERS: "/users",
   MEMBERS: {
-    BOOKINGS: "/api/members/bookings",
-    ACTIVITIES: "/api/members/activities",
+    BOOKINGS: "/members/bookings",
   },
 };
