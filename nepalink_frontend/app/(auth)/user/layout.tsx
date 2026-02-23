@@ -7,8 +7,10 @@ import { clearAuthCookies } from "@/lib/cookie";
 
 const navItems = [
   { name: "Dashboard", href: "/user/dashboard" },
+  { name: "Caregiveer", href: "/user/nurses" },   // ✅ Added Nurses section
   { name: "Bookings", href: "/user/bookings" },
   { name: "Activities", href: "/user/activities" },
+
   { name: "Profile", href: "/user/profile" },
 ];
 
@@ -28,7 +30,7 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
   return (
     <div className="flex min-h-screen relative">
       {/* Sidebar */}
-      <aside className="w-64 bg-gray-900 text-white flex flex-col p-4">
+      <aside className="w-64 bg-gray-900 text-white flex flex-col p-4 overflow-y-auto">
         <h2 className="text-xl font-bold mb-6">Member Panel</h2>
         
         <nav className="flex flex-col space-y-2 flex-1">
@@ -57,7 +59,7 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 bg-gray-50 p-6">{children}</main>
+      <main className="flex-1 bg-gray-50 p-6 overflow-y-auto">{children}</main>
 
       {/* Logout Confirmation Modal */}
       {showConfirm && (
