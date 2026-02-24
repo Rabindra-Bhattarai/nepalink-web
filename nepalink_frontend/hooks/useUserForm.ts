@@ -14,7 +14,7 @@ export function useUserForm(userId: string | undefined) {
       if (!userId) return;
       try {
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/users/${userId}`,
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/users/${userId}`,
           { method: "GET", credentials: "include" }
         );
         const result = await res.json();
@@ -39,7 +39,7 @@ export function useUserForm(userId: string | undefined) {
     setIsUpdating(true);
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/users/${userId}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/users/${userId}`,
         { method: "PATCH", body: formData, credentials: "include" }
       );
       const result = await res.json();
