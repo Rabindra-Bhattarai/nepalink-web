@@ -61,7 +61,7 @@ export default function CreateUserPage() {
     if (image) formData.append("photo", image);
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/users`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/users`, {
         method: "POST",
         body: formData,
         credentials: "include",
