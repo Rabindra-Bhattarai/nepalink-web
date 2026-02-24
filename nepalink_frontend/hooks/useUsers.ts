@@ -20,8 +20,9 @@ export function useUsers(initialPage: number = 1, initialLimit: number = 10) {
           setError("Failed to load users");
           return;
         }
-        setUsers(res.data);
-        setTotal(res.total);
+        // ✅ match the shape returned by fetchUsers
+        setUsers(res.users);
+        setTotal(res.pagination.total);
       } catch (err: any) {
         setError(err.message || "Error fetching users");
       } finally {
