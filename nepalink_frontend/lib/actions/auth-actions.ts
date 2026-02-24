@@ -1,6 +1,7 @@
 "use server";
 import { register, login } from "../api/auth";
-import { cookies } from "next/headers"; // use directly here
+import { cookies } from "next/headers";
+import { setUserData } from "../cookie";
 
 export const handleRegister = async (formData: any) => {
   try {
@@ -8,12 +9,14 @@ export const handleRegister = async (formData: any) => {
 
     if (res.success) {
       const cookieStore = await cookies();
-      cookieStore.set("auth_token", res.token);
-      cookieStore.set("user_data", JSON.stringify(res.data));
+      // Store only the token securely
+      cookieStore.set("auth_token", res.token, { httpOnly: true, secure: true });
+
+      await setUserData(res.data);
 
       return {
         success: true,
-        data: res.data,
+        data: res.data, // returned to client once, not stored in cookie
         message: res.message || "Registration successful",
       };
     }
@@ -30,12 +33,14 @@ export const handleLogin = async (formData: any) => {
 
     if (res.success) {
       const cookieStore = await cookies();
-      cookieStore.set("auth_token", res.token);
-      cookieStore.set("user_data", JSON.stringify(res.data));
+      // Store only the token securely
+      cookieStore.set("auth_token", res.token, { httpOnly: true, secure: true });
+
+      await setUserData(res.data);
 
       return {
         success: true,
-        data: res.data,
+        data: res.data, // returned to client once, not stored in cookie
         message: res.message || "Login successful",
       };
     }
