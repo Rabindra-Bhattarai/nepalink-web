@@ -1,6 +1,6 @@
 import axiosInstance from "./axios";
 import { API } from "./endpoints";
-import { getAuthToken } from "../cookie";
+import { getAuthToken, getUserData } from "../cookie"; // ✅ import both
 
 export const getMyBookings = async () => {
   const token = await getAuthToken();
@@ -47,3 +47,6 @@ export const cancelBooking = async (id: string) => {
   );
   return res.data;
 };
+
+// 👇 re-export cookie helpers so you can import from lib/api/member
+export { getAuthToken, getUserData };
