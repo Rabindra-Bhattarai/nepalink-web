@@ -75,7 +75,7 @@ export default function UserForm({ user, id }: { user: any; id: string }) {
             >
               <option value="nurse">Nurse (Practitioner)</option>
               <option value="member">Member (Access)</option>
-              <option value="admin">Administrator (Control)</option>
+              <option value="admin">Admin (Control)</option>
             </select>
           </div>
         </div>
