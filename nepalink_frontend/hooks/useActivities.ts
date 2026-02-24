@@ -5,13 +5,13 @@ import { getMyActivities } from "@/lib/api/member";
 
 export interface Activity {
   _id: string;
-  description?: string;          // optional, for flexibility
-  notes?: string;                // optional, for logs
-  date: string;                  // main timestamp field
-  performedAt?: string;          // optional, for chart/timeline
+  description?: string;
+  notes?: string;
+  date: string;
+  performedAt?: string;
   status: "pending" | "completed" | "cancelled";
-  nurseId?: { name?: string; email?: string; role?: string } | string;
-  memberId?: { name?: string; email?: string; role?: string } | string;
+  nurseId?: { _id?: string; name?: string; email?: string; role?: string } | string;
+  memberId?: { _id?: string; name?: string; email?: string; role?: string } | string;
   vitalSigns?: {
     bloodPressure?: string;
     heartRate?: number;
@@ -53,8 +53,18 @@ export function useActivities() {
     try {
       setLoading(true);
       const res = await getMyActivities();
-      // backend returns { success: true, data: [...] }
-      setActivities(res.data || []);
+
+      // Debug log to confirm response shape
+      console.log("Activities API response:", res);
+
+      // If backend returns { success: true, data: [...] }
+      if (Array.isArray(res.data)) {
+        setActivities(res.data);
+      } else if (Array.isArray(res.data?.data)) {
+        setActivities(res.data.data);
+      } else {
+        setActivities([]);
+      }
     } catch (err: any) {
       setError(
         err.response?.data?.message || err.message || "Failed to fetch activities"
