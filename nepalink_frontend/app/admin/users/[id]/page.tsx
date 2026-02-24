@@ -23,11 +23,14 @@ export default function UserDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // ✅ Build correct image URL by removing `/api` from base URL
+  const assetBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL?.replace("/api", "");
+
   useEffect(() => {
     async function loadUser() {
       try {
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/users/${id}`,
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/users/${id}`,
           { method: "GET", credentials: "include" }
         );
         const result = await res.json();
@@ -65,18 +68,16 @@ export default function UserDetailPage() {
     );
   }
 
-  if (!user) return null; // ✅ guard against null
+  if (!user) return null;
 
   return (
     <main className="min-h-screen bg-[#F8FAFC] p-4 md:p-12">
       <div className="max-w-4xl mx-auto">
-        {/* Header with back + edit */}
         <UserHeader id={id as string} />
 
-        {/* Profile card with image + role */}
-        <UserProfileCard user={user} id={id as string} />
+        ✅ Pass the assetBaseUrl down to the card
+        <UserProfileCard user={user} id={id as string} assetBaseUrl={assetBaseUrl} />
 
-        {/* Information Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
           <InfoBlock icon="mail" label="Primary Email" value={user.email} />
           <InfoBlock
@@ -104,7 +105,6 @@ export default function UserDetailPage() {
           />
         </div>
 
-        {/* Footer */}
         <p className="text-center mt-10 text-slate-400 text-xs font-medium tracking-widest uppercase">
           Confidential Medical Personnel Record • NepaLink
         </p>
