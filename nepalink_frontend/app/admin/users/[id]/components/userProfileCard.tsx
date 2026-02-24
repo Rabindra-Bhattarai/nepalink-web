@@ -2,7 +2,14 @@
 
 import { User as UserIcon, BadgeCheck } from "lucide-react";
 
-export default function UserProfileCard({ user, id }: { user: any; id: string }) {
+// ✅ 1. Update the interface to include assetBaseUrl
+interface UserProfileCardProps {
+  user: any;
+  id: string;
+  assetBaseUrl: string | undefined;
+}
+
+export default function UserProfileCard({ user, id, assetBaseUrl }: UserProfileCardProps) {
   return (
     <div className="bg-white rounded-[2.5rem] shadow-xl border border-slate-100 overflow-hidden">
       <div className="h-40 bg-linear-to-r from-green-600 via-green-500 to-blue-600 relative">
@@ -16,19 +23,20 @@ export default function UserProfileCard({ user, id }: { user: any; id: string })
               <div className="w-full h-full rounded-[1.75rem] bg-slate-100 overflow-hidden flex items-center justify-center border border-slate-100">
                 {user.imageUrl ? (
                   <img
-                    src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/uploads/${user.imageUrl}`}
+                    // ✅ 2. Use the prop passed from the parent
+                    src={`${assetBaseUrl}/uploads/${user.imageUrl}`}
                     alt={user.name}
                     className="w-full h-full object-cover"
+                    onError={(e) => {
+                       (e.target as HTMLImageElement).src = ""; 
+                    }}
                   />
                 ) : (
                   <UserIcon size={50} className="text-slate-300" />
                 )}
               </div>
             </div>
-            <div
-              className="absolute bottom-3 right-3 bg-green-500 border-4 border-white w-7 h-7 rounded-full shadow-lg"
-              title="Account Active"
-            >
+            <div className="absolute bottom-3 right-3 bg-green-500 border-4 border-white w-7 h-7 rounded-full shadow-lg">
               <span className="absolute inset-0 rounded-full bg-green-500 animate-ping opacity-25"></span>
             </div>
           </div>
@@ -39,15 +47,11 @@ export default function UserProfileCard({ user, id }: { user: any; id: string })
               <BadgeCheck className="text-blue-500" size={24} />
             </div>
             <div className="flex flex-wrap gap-2">
-              <span
-                className={`px-4 py-1 rounded-lg text-[11px] font-black uppercase tracking-wider border ${
-                  user.role === "admin"
-                    ? "bg-purple-50 text-purple-700 border-purple-100"
-                    : user.role === "nurse"
-                    ? "bg-blue-50 text-blue-700 border-blue-100"
-                    : "bg-slate-50 text-slate-600 border-slate-200"
-                }`}
-              >
+              <span className={`px-4 py-1 rounded-lg text-[11px] font-black uppercase tracking-wider border ${
+                  user.role === "admin" ? "bg-purple-50 text-purple-700 border-purple-100" : 
+                  user.role === "nurse" ? "bg-blue-50 text-blue-700 border-blue-100" : 
+                  "bg-slate-50 text-slate-600 border-slate-200"
+                }`}>
                 {user.role}
               </span>
               <span className="px-4 py-1 rounded-lg text-[11px] font-black uppercase tracking-wider bg-green-50 text-green-700 border border-green-100">
