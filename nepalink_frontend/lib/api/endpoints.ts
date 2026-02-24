@@ -15,4 +15,12 @@ export const API = {
   MEMBERS: {
     BOOKINGS: "/members/bookings",
   },
+  CONTRACTS: {
+    BY_ID: (id: string) => `/contracts/${id}`,
+  },
+  CHAT: {
+    MESSAGES: (contractId: string) => `/chat/${contractId}`,
+    SEND: (contractId: string) => `/chat/${contractId}/message`,
+    MARK_READ: (contractId: string) => `/chat/${contractId}/read`,
+  }, 
 };
