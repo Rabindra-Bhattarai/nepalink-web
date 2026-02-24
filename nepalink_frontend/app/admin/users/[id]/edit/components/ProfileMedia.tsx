@@ -11,6 +11,9 @@ export default function ProfileMedia({
   preview: string | null;
   handlePreview: (file: File) => void;
 }) {
+  // ✅ Build correct image URL: remove `/api` from NEXT_PUBLIC_API_BASE_URL
+  const assetBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL?.replace("/api", "");
+
   return (
     <div className="lg:col-span-1">
       <div className="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm flex flex-col items-center">
@@ -24,7 +27,7 @@ export default function ProfileMedia({
               <img
                 src={
                   preview ||
-                  `${process.env.NEXT_PUBLIC_API_BASE_URL}/uploads/${user.imageUrl}`
+                  `${assetBaseUrl}/uploads/${user.imageUrl}`
                 }
                 alt="User"
                 className="w-full h-full object-cover"
@@ -43,6 +46,7 @@ export default function ProfileMedia({
                 const file = e.target.files?.[0];
                 if (file) handlePreview(file);
               }}
+              accept="image/*"
             />
           </label>
         </div>
