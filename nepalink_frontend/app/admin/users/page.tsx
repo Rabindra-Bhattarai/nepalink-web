@@ -194,7 +194,7 @@ export default function AdminUsersPage() {
             </table>
           </div>
 
-          {/* Footer Pagination */}
+        {/* Footer Pagination */}
           <div className="mt-auto px-8 py-5 bg-white border-t border-slate-100 flex items-center justify-between">
             <p className="text-[12px] font-bold text-slate-400">
               Showing page <span className="text-slate-900">{page}</span> of {totalPages || 1}
@@ -234,4 +234,4 @@ export default function AdminUsersPage() {
       </main>
     </div>
   );
-}
+}  
