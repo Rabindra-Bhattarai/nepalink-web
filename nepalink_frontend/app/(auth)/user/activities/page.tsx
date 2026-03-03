@@ -116,10 +116,7 @@ export default function ActivitiesPage() {
           </div>
         </div>
 
-        <div className="hidden md:flex items-center gap-2 text-blue-600 bg-white px-3 py-1 rounded-full border border-sky-100 text-xs font-bold">
-           <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse" />
-           Live Record Sync
-        </div>
+        
       </div>
 
       {error ? (

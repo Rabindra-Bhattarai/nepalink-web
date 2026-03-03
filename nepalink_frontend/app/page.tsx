@@ -143,7 +143,14 @@ const style = `
   }
 `;
 
-function FeatureCard({ icon, iconClass, title, description }) {
+interface FeatureCardProps {
+  icon: string;
+  iconClass: string;
+  title: string;
+  description: string;
+}
+
+function FeatureCard({ icon, iconClass, title, description }: FeatureCardProps) {
   return (
     <div className="feature-card">
       <div className={"feature-icon " + iconClass}>{icon}</div>

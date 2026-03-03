@@ -103,7 +103,7 @@ export const LoginForm = () => {
           
           <div className="mt-6 flex items-center justify-center gap-2 text-slate-300">
             <ShieldCheck size={14} />
-            <span className="text-[10px] font-medium uppercase tracking-[0.2em]">SSL Encrypted</span>
+            <span className="text-[10px] font-medium uppercase tracking-[0.2em]">Secure Login</span>
           </div>
         </div>
       </form>
