@@ -22,7 +22,7 @@ export const LoginForm = () => {
   return (
     <div className="w-full antialiased">
       <div className="mb-8 text-left">
-        <h2 className="text-3xl font-normal text-slate-900 tracking-tight">Staff Login</h2>
+        <h2 className="text-3xl font-normal text-slate-900 tracking-tight">Member Login</h2>
         <p className="text-slate-500 mt-2 font-normal">Secure access to the healthcare portal</p>
       </div>
 
