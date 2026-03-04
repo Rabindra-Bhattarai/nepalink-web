@@ -75,7 +75,7 @@ export default function UserDetailPage() {
       <div className="max-w-4xl mx-auto">
         <UserHeader id={id as string} />
 
-        ✅ Pass the assetBaseUrl down to the card
+        {/* ✅ Pass the assetBaseUrl down to the card */}
         <UserProfileCard user={user} id={id as string} assetBaseUrl={assetBaseUrl} />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">

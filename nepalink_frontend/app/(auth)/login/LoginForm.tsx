@@ -22,7 +22,7 @@ export const LoginForm = () => {
   return (
     <div className="w-full antialiased">
       <div className="mb-8 text-left">
-        <h2 className="text-3xl font-normal text-slate-900 tracking-tight">Staff Login</h2>
+        <h2 className="text-3xl font-normal text-slate-900 tracking-tight">Member Login</h2>
         <p className="text-slate-500 mt-2 font-normal">Secure access to the healthcare portal</p>
       </div>
 
@@ -103,7 +103,7 @@ export const LoginForm = () => {
           
           <div className="mt-6 flex items-center justify-center gap-2 text-slate-300">
             <ShieldCheck size={14} />
-            <span className="text-[10px] font-medium uppercase tracking-[0.2em]">SSL Encrypted</span>
+            <span className="text-[10px] font-medium uppercase tracking-[0.2em]">Secure Login</span>
           </div>
         </div>
       </form>
